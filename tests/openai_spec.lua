@@ -31,8 +31,8 @@ describe('ChatGPT call', function()
 
 		curl.post.returns({ body = vim.fn.json_encode(completion_response) } )
 
-		local flyboy = require('flyboy.init')
-		local completion = flyboy.get_chatgpt_completion({ { role = "system", content = "Say hello!" } })
+		local openai = require('flyboy.openai')
+		local completion = openai.get_chatgpt_completion({ { role = "system", content = "Say hello!" } })
 
 		eq(completion, completion_response)
 	end)
