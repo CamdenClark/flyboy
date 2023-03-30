@@ -1,2 +1,2 @@
-local function init()
-end
+vim.cmd("command! -range=% MyCommand lua my_command(<line1>, <line2>)")
+
