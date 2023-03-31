@@ -12,7 +12,7 @@ local function get_chatgpt_completion(messages, callback)
 					model = "gpt-3.5-turbo",
 					messages = messages
 				}),
-			callback = function (response) callback(vim.fn.json_decode(response.body)) end
+			callback = vim.schedule_wrap(function (response) callback(vim.fn.json_decode(response.body)) end)
 		})
 end
 
@@ -29,12 +29,11 @@ local function get_code_edit(input, instruction, callback)
 					input = input,
 					instruction = instruction
 				}),
-			callback = function (response) callback(vim.fn.json_decode(response.body)) end
+			callback = vim.schedule_wrap(function (response) callback(vim.fn.json_decode(response.body)) end)
 		})
 end
 
 return {
 	get_chatgpt_completion = get_chatgpt_completion,
 	get_code_edit = get_code_edit
-
 }

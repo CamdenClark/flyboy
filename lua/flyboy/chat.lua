@@ -28,7 +28,13 @@ local function parseMarkdown()
 				content = ""
 			}
 		elseif currentEntry then
-			currentEntry.content = currentEntry.content .. line .. "\n"
+			if not (line == "") then
+				if currentEntry.content == "" then
+					currentEntry.content = line
+				else
+					currentEntry.content = currentEntry.content .. "\n" .. line
+				end
+			end
 		end
 	end
 	if currentEntry then
@@ -46,9 +52,7 @@ local function send_message()
 
 	vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { "# Assistant", "..." })
 
-	local response = openai.get_chatgpt_completion(messages)
-	if (response) then
-		print(vim.fn.json_encode(response))
+	local callback = function(response)
 		local lines_to_add = vim.split(response.choices[1].message.content, "\n")
 		table.insert(lines_to_add, 1, "# Assistant")
 		table.insert(lines_to_add, 1, "")
@@ -59,6 +63,8 @@ local function send_message()
 
 		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 2, false, lines_to_add)
 	end
+
+	openai.get_chatgpt_completion(messages, callback)
 end
 
 return {

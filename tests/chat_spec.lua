@@ -44,7 +44,7 @@ describe('send_message', function()
 
 		assert
 		    .stub(openai.get_chatgpt_completion)
-		    .was_called_with(match.table({ { role = "user", content = "Some content\nSecond line" } }))
+		    .was_called_with(match.table({ { role = "user", content = "Some content\nSecond line" } }), match.is_function())
 	end)
 	it('shows a loading state while we wait for output', function()
 		-- Call the function with a range of lines and a new string
@@ -61,7 +61,6 @@ describe('send_message', function()
 		-- Call the function with a range of lines and a new string
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "# User", "Some content", "Second line" })
 		mock.new(openai, true)
-		openai.get_chatgpt_completion.returns(completion_response)
 		chat.send_message()
 
 		-- Assert that the selected lines were replaced with the expected string
@@ -90,6 +89,6 @@ describe('send_message', function()
 		            { role = "user", content = "Some content\nSecond line" },
 		            { role = "assistant", content = "test" },
 		            { role = "user", content = "Second user message" },
-		    }))
+		    }), match.is_function())
 	end)
 end)
