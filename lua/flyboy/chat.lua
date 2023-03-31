@@ -3,6 +3,7 @@ local openai = require('flyboy.openai')
 local function create_chat()
 	-- create a new empty buffer
 	local buffer = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_option(buffer, "filetype", "markdown")
 
 	-- switch to the new buffer
 	vim.api.nvim_set_current_buf(buffer)
