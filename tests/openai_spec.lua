@@ -8,7 +8,10 @@ local completion_response = {
 	object = "edit",
 	created = 1677652288,
 	choices = { {
-		text = "Output",
+		message = {
+			role = "assistant",
+			content = "Output"
+		},
 		index = 0
 	} },
 	usage = {

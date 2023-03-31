@@ -20,7 +20,7 @@ local function get_chatgpt_completion(messages)
 end
 
 local function get_code_edit(input, instruction)
-	local completions = curl.post("https://api.openai.com/v1/edits",
+	local edits = curl.post("https://api.openai.com/v1/edits",
 		{
 			headers = {
 				Authorization = "Bearer " .. vim.env.OPENAI_API_KEY,
@@ -33,8 +33,8 @@ local function get_code_edit(input, instruction)
 					instruction = instruction
 				})
 		})
-	if (completions) then
-		return vim.fn.json_decode(completions.body)
+	if (edits) then
+		return vim.fn.json_decode(edits.body)
 	end
 	return nil
 end
