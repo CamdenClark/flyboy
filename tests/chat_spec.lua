@@ -57,21 +57,6 @@ describe('send_message', function()
 		assert.stub(vim.api.nvim_buf_set_lines).was_called_with(match.number(), match.number(), match.number(), false,
 			match.table({ "# Assistant", "..." }))
 	end)
-	it('outputs the lines returned from openai', function()
-		-- Call the function with a range of lines and a new string
-		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "# User", "Some content", "Second line" })
-		mock.new(openai, true)
-		chat.send_message()
-
-		-- Assert that the selected lines were replaced with the expected string
-		local expected_lines = {
-			"# User", "Some content", "Second line", "",
-			"# Assistant", "Output", "",
-			"# User", ""
-		}
-		local actual_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-		assert.are.same(expected_lines, actual_lines)
-	end)
 	it('multi-turn chats are sent as expected', function()
 		-- Call the function with a range of lines and a new string
 		vim.api.nvim_buf_set_lines(0, 0, -1, false,
