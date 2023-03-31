@@ -1,7 +1,7 @@
 local curl = require('plenary.curl')
 
-local function get_chatgpt_completion(messages)
-	local completions = curl.post("https://api.openai.com/v1/chat/completions",
+local function get_chatgpt_completion(messages, callback)
+	curl.post("https://api.openai.com/v1/chat/completions",
 		{
 			headers = {
 				Authorization = "Bearer " .. vim.env.OPENAI_API_KEY,
@@ -11,16 +11,13 @@ local function get_chatgpt_completion(messages)
 				{
 					model = "gpt-3.5-turbo",
 					messages = messages
-				})
+				}),
+			callback = function (response) callback(vim.fn.json_decode(response.body)) end
 		})
-	if (completions) then
-		return vim.fn.json_decode(completions.body)
-	end
-	return nil
 end
 
-local function get_code_edit(input, instruction)
-	local edits = curl.post("https://api.openai.com/v1/edits",
+local function get_code_edit(input, instruction, callback)
+	curl.post("https://api.openai.com/v1/edits",
 		{
 			headers = {
 				Authorization = "Bearer " .. vim.env.OPENAI_API_KEY,
@@ -31,12 +28,9 @@ local function get_code_edit(input, instruction)
 					model = "code-davinci-edit-001",
 					input = input,
 					instruction = instruction
-				})
+				}),
+			callback = function (response) callback(vim.fn.json_decode(response.body)) end
 		})
-	if (edits) then
-		return vim.fn.json_decode(edits.body)
-	end
-	return nil
 end
 
 return {

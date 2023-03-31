@@ -1,6 +1,8 @@
 local mock = require('luassert.mock')
 local match = require('luassert.match')
 
+local openai = require('flyboy.openai')
+
 local eq = assert.are.same
 
 local completion_response = {
@@ -23,29 +25,16 @@ local completion_response = {
 
 describe('ChatGPT call', function()
 	local testCurl = require('plenary.curl')
-	it('returns the completion response from curl call', function()
-		local curl = mock(testCurl, true)
-		local env = mock(vim.env, true)
-
-		env.OPENAI_API_KEY = "test"
-
-		curl.post.returns({ body = vim.fn.json_encode(completion_response) })
-
-		local openai = require('flyboy.openai')
-		local completion = openai.get_chatgpt_completion({ { role = "system", content = "Say hello!" } })
-
-		eq(completion, completion_response)
-	end)
 	it('uses the correct API key and body', function()
 		local curl = mock(testCurl, true)
 		local env = mock(vim.env, true)
+		local callback = function (_) end
 
 		env.OPENAI_API_KEY = "test"
 
 		curl.post.returns({ body = vim.fn.json_encode(completion_response) })
 
-		local openai = require('flyboy.openai')
-		openai.get_chatgpt_completion({ { role = "system", content = "Say hello!" } })
+		openai.get_chatgpt_completion({ { role = "system", content = "Say hello!" } }, callback)
 
 		assert.stub(curl.post).was_called_with("https://api.openai.com/v1/chat/completions", match.table({
 			headers = {
@@ -54,34 +43,23 @@ describe('ChatGPT call', function()
 			},
 			body = vim.fn.json_encode({
 				messages = { { role = "system", content = "Say hello!" } },
-				model = "gpt-3.5-turbo"
-			})
-		}))
+				model = "gpt-3.5-turbo" }),
+			callback = callback
+		})
+		)
 	end)
 
 end)
 describe('GPT edits call', function()
 	local testCurl = require('plenary.curl')
-	it('returns the completion response from curl call', function()
-		local curl = mock(testCurl, true)
-		local env = mock(vim.env, true)
-
-		env.OPENAI_API_KEY = "test"
-
-		curl.post.returns({ body = vim.fn.json_encode(completion_response) })
-
-		local openai = require('flyboy.openai')
-		local completion = openai.get_code_edit("input", "instruction")
-
-		eq(completion, completion_response)
-	end)
 	it('uses the correct API key and body', function()
 		local curl = mock(testCurl, true)
 		local env = mock(vim.env, true)
+		local callback = function (response) end
 
 		env.OPENAI_API_KEY = "test"
 
-		curl.post.returns({ body = vim.fn.json_encode(completion_response) })
+		curl.post.returns({ body = vim.fn.json_encode(completion_response) }, callback)
 
 		local openai = require('flyboy.openai')
 		openai.get_code_edit("input", "instruction")
@@ -92,10 +70,11 @@ describe('GPT edits call', function()
 				['Authorization'] = 'Bearer test'
 			},
 			body = vim.fn.json_encode({
-					model = "code-davinci-edit-001",
-					input = "input",
-					instruction = "instruction"
-			})
+				model = "code-davinci-edit-001",
+				input = "input",
+				instruction = "instruction"
+			}),
+			callback = callback
 		}))
 	end)
 
