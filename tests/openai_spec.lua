@@ -3,8 +3,6 @@ local match = require('luassert.match')
 
 local openai = require('flyboy.openai')
 
-local eq = assert.are.same
-
 local completion_response = {
 	id = "chatcmpl-123",
 	object = "edit",
@@ -50,18 +48,18 @@ describe('ChatGPT call', function()
 	end)
 
 end)
+
 describe('GPT edits call', function()
 	local testCurl = require('plenary.curl')
 	it('uses the correct API key and body', function()
 		local curl = mock(testCurl, true)
 		local env = mock(vim.env, true)
-		local callback = function (response) end
+		local callback = function (_) end
 
 		env.OPENAI_API_KEY = "test"
 
 		curl.post.returns({ body = vim.fn.json_encode(completion_response) }, callback)
 
-		local openai = require('flyboy.openai')
 		openai.get_code_edit("input", "instruction")
 
 		assert.stub(curl.post).was_called_with("https://api.openai.com/v1/edits", match.table({
