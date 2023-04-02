@@ -1,16 +1,35 @@
 local openai = require('flyboy.openai')
 
-local function create_chat()
+local function create_chat_buf()
 	-- create a new empty buffer
-	local buffer = vim.api.nvim_create_buf(false, true)
+	local buffer = vim.api.nvim_create_buf(true, false)
 	vim.api.nvim_buf_set_option(buffer, "filetype", "markdown")
-
-	-- switch to the new buffer
-	vim.api.nvim_set_current_buf(buffer)
 
 	-- insert some text into the buffer
 	local lines = { "# User", "" }
 	vim.api.nvim_buf_set_lines(buffer, 0, -1, true, lines)
+	return buffer
+end
+
+local function create_chat()
+	local buffer = create_chat_buf()
+
+	vim.api.nvim_set_current_buf(buffer)
+end
+
+
+local function create_chat_vsplit()
+	local buffer = create_chat_buf()
+	-- switch to the new buffer
+	-- vim.api.nvim_set_current_buf(buffer)
+	vim.cmd("vsp | b" .. buffer)
+end
+
+local function create_chat_split()
+	local buffer = create_chat_buf()
+	-- switch to the new buffer
+	-- vim.api.nvim_set_current_buf(buffer)
+	vim.cmd("sp | b" .. buffer)
 end
 
 local function parseMarkdown()
@@ -53,6 +72,7 @@ local function send_message()
 
 	vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { "# Assistant", "..." })
 
+
 	local callback = function(response)
 		local lines_to_add = vim.split(response.choices[1].message.content, "\n")
 		table.insert(lines_to_add, 1, "# Assistant")
@@ -70,5 +90,9 @@ end
 
 return {
 	create_chat = create_chat,
-	send_message = send_message
+	send_message = send_message,
+	create_chat_split = create_chat_split,
+	create_chat_vsplit = create_chat_vsplit
+
+
 }

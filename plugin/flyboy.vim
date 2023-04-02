@@ -1,3 +1,6 @@
 command! -range=% -nargs=1 FlyboyEditLines lua require('flyboy.edit').edit_lines(<line1>, <line2>, <f-args>)
-command! FlyboyStartChat lua require('flyboy.chat').create_chat()
-command! FlyboySendChatMessage lua require('flyboy.chat').send_message()
+command! FlyboyChat lua require('flyboy.chat').create_chat()
+command! FlyboyChatSplit lua require('flyboy.chat').create_chat_split()
+command! FlyboyChatVSplit lua require('flyboy.chat').create_chat_vsplit()
+command! -range=% FlyboyChatSelection lua require('flyboy.chat').create_chat_range(<line1>,<line2>)
+command! FlyboyChatMessage lua require('flyboy.chat').send_message()
