@@ -70,8 +70,7 @@ local function send_message()
 	local buffer = vim.api.nvim_get_current_buf()
 	local currentLine = vim.api.nvim_buf_line_count(buffer)
 
-	vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { "# Assistant", "..." })
-
+	vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { "", "# Assistant", "..." })
 
 	local callback = function(response)
 		local lines_to_add = vim.split(response.choices[1].message.content, "\n")
@@ -82,7 +81,7 @@ local function send_message()
 		table.insert(lines_to_add, "# User")
 		table.insert(lines_to_add, "")
 
-		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 2, false, lines_to_add)
+		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 3, false, lines_to_add)
 	end
 
 	openai.get_chatgpt_completion(messages, callback)
@@ -93,6 +92,4 @@ return {
 	send_message = send_message,
 	create_chat_split = create_chat_split,
 	create_chat_vsplit = create_chat_vsplit
-
-
 }
