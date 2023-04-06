@@ -45,8 +45,8 @@ local templates = {
 	visual_with_prompt = {
 		template_fn = function(sources_table)
 			return "# User\n"
-			    .. sources_table.prompt("Prompt to add before selection context: ") .. "\n"
-			    .. sources_table.visual()
+				.. sources_table.prompt("Prompt to add before selection context: ") .. "\n"
+				.. sources_table.visual()
 		end
 	},
 }

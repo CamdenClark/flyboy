@@ -17,7 +17,7 @@ local function open_chat_template(template)
 		template = "blank"
 	end
 	local final_text = config.options.templates[template]
-	    .template_fn(config.options.sources)
+		.template_fn(config.options.sources)
 
 	return open_chat_with_text(final_text)
 end
