@@ -61,7 +61,7 @@ local function parseMarkdown()
 				content = ""
 			}
 		elseif currentEntry then
-			if not (line == "") then
+			if (line ~= "") then
 				if currentEntry.content == "" then
 					currentEntry.content = line
 				else

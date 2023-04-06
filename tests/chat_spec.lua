@@ -61,7 +61,7 @@ describe('open_chat with custom config', function()
 	it('uses the config template to open a chat', function()
 		config.setup({ templates = {
 			sample = {
-				template_fn = function(sources)
+				template_fn = function(_)
 					return "# User\nTest"
 				end
 			}
