@@ -33,6 +33,29 @@ describe('create_chat', function()
 	end)
 end)
 
+describe('create_chat_template visual', function()
+	it('opens a new buffer with selected text as a chat', function()
+		-- Set up a fake selection, starting on line 3, column 3, and ending on line 5, column 4
+		local selected_lines = { "hello world", "example", "some text", "more text here", "and here" }
+		vim.api.nvim_command('enew')
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, selected_lines)
+		vim.fn.getpos = function (mark)
+			if (mark == "'<") then
+				return { 0, 2, 2 }
+			else
+				return { 0, 3, 7 }
+			end
+		end
+
+		-- Call the function to create a chat from the selection
+		local buffer = chat.create_chat_template("visual")
+		-- Assert that the new buffer was created and contains the expected chat text
+		local expected_text = "# User\nxample\nsome t\n"
+		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
+		assert.are.same(expected_text, actual_text)
+	end)
+end)
+
 local function test_completion(start_content, chat_gpt_output, expected_loading, expected_after)
 	vim.api.nvim_buf_set_lines(0, 0, -1, false, start_content)
 	mock.new(openai, true)
