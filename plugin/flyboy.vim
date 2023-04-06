@@ -7,5 +7,3 @@ command! -range=% -nargs=* FlyboyStartSplit lua require('flyboy.chat').start_cha
 command! -range=% -nargs=* FlyboyStartVSplit lua require('flyboy.chat').start_chat_vsplit(<f-args>)
 
 command! FlyboySendMessage lua require('flyboy.chat').send_message()
-
-command! -range=% -nargs=1 FlyboyEditLines lua require('flyboy.edit').edit_lines(<line1>, <line2>, <f-args>)
