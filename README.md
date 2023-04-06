@@ -34,7 +34,7 @@ Write a unit test in Lua for the following code
 
 and automatically send them to ChatGPT for a response.
 
-## Requirements
+## Installation
 
 1. Put your `OPENAI_API_KEY` as an environment variable
 
