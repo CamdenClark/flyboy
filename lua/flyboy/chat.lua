@@ -1,7 +1,6 @@
 local openai = require('flyboy.openai')
 
-local function create_chat_buf_with_text(text)
-
+local function open_chat_buf_with_text(text)
 	-- create a new empty buffer
 	local buffer = vim.api.nvim_create_buf(true, false)
 	vim.api.nvim_buf_set_option(buffer, "filetype", "markdown")
@@ -12,21 +11,21 @@ local function create_chat_buf_with_text(text)
 	return buffer
 end
 
-local function create_chat()
+local function open_chat()
 	-- insert some text into the buffer
-	local buffer = create_chat_buf_with_text("# User")
+	local buffer = open_chat_buf_with_text("# User")
 	vim.api.nvim_set_current_buf(buffer)
 end
 
-local function create_chat_vsplit()
-	local buffer = create_chat_buf_with_text("# User")
+local function open_chat_vsplit()
+	local buffer = open_chat_buf_with_text("# User")
 	-- switch to the new buffer
 	vim.cmd("vsp | b" .. buffer)
 	vim.api.nvim_set_current_buf(buffer)
 end
 
-local function create_chat_split()
-	local buffer = create_chat_buf_with_text("# User")
+local function open_chat_split()
+	local buffer = open_chat_buf_with_text("# User")
 	-- switch to the new buffer
 	vim.cmd("sp | b" .. buffer)
 	vim.api.nvim_set_current_buf(buffer)
@@ -55,49 +54,48 @@ local sources = {
 	end,
 	prompt = function(message)
 		return vim.fn.input(message)
-	end
+	end,
+
 }
 
 local templates = {
 	visual = {
-		sources = { "visual" },
 		template_fn = function(sources)
 			return "# User\n" .. sources.visual()
 		end
 	},
-	do_something = {
-		sources = { "visual" },
+	visual_with_prompt = {
 		template_fn = function(sources)
 			return "# User\n"
-			    .. sources.prompt("Enter a thing we should do") .. "\n"
+			    .. sources.prompt("Prompt to add before selection context: ") .. "\n"
 			    .. sources.visual()
 		end
 	},
 }
 
-local function create_chat_template(template)
+local function open_chat_template(template)
 	local final_text = templates[template].template_fn(sources)
 
-	return create_chat_buf_with_text(final_text)
+	return open_chat_buf_with_text(final_text)
 end
 
-local function create_chat_template_buf(template)
-	local chat_buffer = create_chat_template(template)
+local function open_chat_template_buf(template)
+	local chat_buffer = open_chat_template(template)
 
 	vim.api.nvim_set_current_buf(chat_buffer)
 	return chat_buffer
 end
 
-local function create_chat_template_split(template)
-	local chat_buffer = create_chat_template(template)
+local function open_chat_template_split(template)
+	local chat_buffer = open_chat_template(template)
 	vim.cmd("sp | b" .. chat_buffer)
 
 	vim.api.nvim_set_current_buf(chat_buffer)
 	return chat_buffer
 end
 
-local function create_chat_template_vsplit(template)
-	local chat_buffer = create_chat_template(template)
+local function open_chat_template_vsplit(template)
+	local chat_buffer = open_chat_template(template)
 	vim.cmd("vsp | b" .. chat_buffer)
 
 	vim.api.nvim_set_current_buf(chat_buffer)
@@ -160,12 +158,11 @@ local function send_message()
 end
 
 return {
-	create_chat = create_chat,
+	open_chat = open_chat,
 	send_message = send_message,
-	create_chat_split = create_chat_split,
-	create_chat_vsplit = create_chat_vsplit,
-	create_chat_template_buf = create_chat_template_buf,
-	create_chat_template_split = create_chat_template_split,
-	create_chat_template_vsplit = create_chat_template_vsplit,
-
+	open_chat_split = open_chat_split,
+	open_chat_vsplit = open_chat_vsplit,
+	open_chat_template_buf = open_chat_template_buf,
+	open_chat_template_split = open_chat_template_split,
+	open_chat_template_vsplit = open_chat_template_vsplit,
 }

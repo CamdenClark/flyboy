@@ -48,7 +48,7 @@ describe('create_chat_template visual', function()
 		end
 
 		-- Call the function to create a chat from the selection
-		local buffer = chat.create_chat_template("visual")
+		local buffer = chat.create_chat_template_buf("visual")
 		-- Assert that the new buffer was created and contains the expected chat text
 		local expected_text = "# User\nxample\nsome t\n"
 		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
