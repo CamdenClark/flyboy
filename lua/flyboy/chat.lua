@@ -34,7 +34,12 @@ local sources = {
 	prompt = function(message)
 		return vim.fn.input(message)
 	end,
-
+	filetype = function()
+		return vim.bo.filetype
+	end,
+	path = function()
+		return vim.api.nvim_buf_get_name(0)
+	end,
 }
 
 local templates = {
