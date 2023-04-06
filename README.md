@@ -1,38 +1,100 @@
-# nvim-lua-plugin-template
+# flyboy.nvim
 
-This repository is a template for Neovim plugins written in Lua.
+Flyboy is a plugin for lightweight interaction with ChatGPT.
 
-The intention is that you use this template to create a new repository where you then adapt this readme and add your plugin code.
-The template includes the following:
+It works by using a simple markdown format, as follows:
 
-- GitHub workflows to run linters and tests
-- Minimal test setup
-- EditorConfig
-- A .luacheckrc
+```markdown
+# User
 
+Who was the 1st president of the United States?
 
-To get started writing a Lua plugin, I recommend reading the [nvim-lua-guide][nvim-lua-guide].
+# Assistant
 
-## Scope
+George Washington
 
-Anything that the majority of plugin authors will want to have is in scope of
-this starter template. Anything that is controversial is out-of-scope.
+# User
 
----
+...
+```
 
+This makes it really easy to:
 
-The remainder of the README is text that can be preserved in your plugin:
+1. Start chats
+1. Save chats
+1. Edit conversations in line
+1. Have multi-turn conversations
 
----
+Flyboy also supports configuring custom templates and data sources, so you can support prompts like the following:
 
+```markdown
+# User
+
+Write a unit test in Lua for the following code
+<Your code here>
+```
+
+## Requirements
+
+1. Put your `OPENAI_API_KEY` as an environment variable
+
+```
+export OPENAI_API_KEY=""
+```
+
+2. Have curl installed on your machine
+
+3. Install `plenary.nvim` and `flyboy.nvim` using your package manager:
+
+For example, using plug
+
+```
+Plug 'nvim-lua/plenary.nvim'
+Plug 'CamdenClark/flyboy'
+```
+
+## Functions
+
+These functions open a new chat window. Split opens in a horizontal split,
+while VSplit opens in a vertical split. They optionally take a
+
+```vim
+:FlyboyOpen
+:FlyboyOpenSplit
+:FlyboyOpenVSplit
+
+// open a chat buffer with the current text selected in visual mode
+:FlyboyOpen visual
+```
+
+These functions open a new chat window and automatically send the message to the
+assistant. Best used with a template.
+
+```vim
+// starts a chat session with the current text selected in visual mode
+:FlyboyStart visual
+:FlyboyStartSplit visual
+:FlyboyStartVSplit visual
+```
+
+Finally, at any time, you can send a message:
+
+```vim
+:FlyboySendMessage
+```
 
 ## Development
 
 ### Run tests
 
-
-Running tests requires [plenary.nvim][plenary] to be checked out in the parent directory of *this* repository.
+Running tests requires [plenary.nvim][plenary] to be checked out in the parent directory of _this_ repository.
 You can then run:
+
+```bash
+just test
+```
+
+or, more verbose:
 
 ```bash
 nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'}"
@@ -41,9 +103,12 @@ nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests
 Or if you want to run a single test file:
 
 ```bash
-nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/path_to_file.lua {minimal_init = 'tests/minimal.vim'}"
+just test chat_spec.lua
 ```
 
+```bash
+nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/path_to_file.lua {minimal_init = 'tests/minimal.vim'}"
+```
 
 [nvim-lua-guide]: https://github.com/nanotee/nvim-lua-guide
 [plenary]: https://github.com/nvim-lua/plenary.nvim
