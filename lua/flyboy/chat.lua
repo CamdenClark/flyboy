@@ -1,4 +1,5 @@
 local openai = require('flyboy.openai')
+local config = require('flyboy.config')
 
 local function open_chat_with_text(text)
 	-- create a new empty buffer
@@ -11,62 +12,12 @@ local function open_chat_with_text(text)
 	return buffer
 end
 
-local sources = {
-	visual = function()
-		local start_pos = vim.fn.getpos("'<")
-		local end_pos = vim.fn.getpos("'>")
-
-		local start_line, start_col = start_pos[2], start_pos[3]
-		local end_line, end_col = end_pos[2], end_pos[3]
-
-		local buffer = vim.api.nvim_get_current_buf()
-		local lines = vim.api.nvim_buf_get_lines(buffer, start_line - 1, end_line, false)
-
-		-- Modify the first line to start at the correct column
-		lines[1] = lines[1]:sub(start_col)
-
-		-- Modify the last line to end at the correct column
-		lines[#lines] = lines[#lines]:sub(1, end_col - 1)
-
-		-- Join the lines into a single string
-		return table.concat(lines, "\n")
-	end,
-	prompt = function(message)
-		return vim.fn.input(message)
-	end,
-	filetype = function()
-		return vim.bo.filetype
-	end,
-	path = function()
-		return vim.api.nvim_buf_get_name(0)
-	end,
-}
-
-local templates = {
-	blank = {
-		template_fn = function(sources)
-			return "# User"
-		end
-	},
-	visual = {
-		template_fn = function(sources)
-			return "# User\n" .. sources.visual()
-		end
-	},
-	visual_with_prompt = {
-		template_fn = function(sources)
-			return "# User\n"
-			    .. sources.prompt("Prompt to add before selection context: ") .. "\n"
-			    .. sources.visual()
-		end
-	},
-}
-
 local function open_chat_template(template)
 	if not (template) then
 		template = "blank"
 	end
-	local final_text = templates[template].template_fn(sources)
+	local final_text = config.options.templates[template]
+	    .template_fn(config.options.sources)
 
 	return open_chat_with_text(final_text)
 end

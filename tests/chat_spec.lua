@@ -1,5 +1,6 @@
 local chat = require('flyboy.chat')
 local openai = require('flyboy.openai')
+local config = require('flyboy.config')
 local mock = require('luassert.mock')
 
 
@@ -39,7 +40,7 @@ describe('open_chat visual', function()
 		local selected_lines = { "hello world", "example", "some text", "more text here", "and here" }
 		vim.api.nvim_command('enew')
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, selected_lines)
-		vim.fn.getpos = function (mark)
+		vim.fn.getpos = function(mark)
 			if (mark == "'<") then
 				return { 0, 2, 2 }
 			else
@@ -51,6 +52,48 @@ describe('open_chat visual', function()
 		local buffer = chat.open_chat("visual")
 		-- Assert that the new buffer was created and contains the expected chat text
 		local expected_text = "# User\nxample\nsome t\n"
+		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
+		assert.are.same(expected_text, actual_text)
+	end)
+end)
+
+describe('open_chat with custom config', function()
+	it('uses the config template to open a chat', function()
+		config.setup({ templates = {
+			sample = {
+				template_fn = function(sources)
+					return "# User\nTest"
+				end
+			}
+		} })
+
+		-- Call the function to create a chat from the selection
+		local buffer = chat.open_chat("sample")
+		-- Assert that the new buffer was created and contains the expected chat text
+		local expected_text = "# User\nTest\n"
+		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
+		assert.are.same(expected_text, actual_text)
+	end)
+	it('uses the config source and template to open a chat', function()
+		config.setup({
+			sources = {
+				a = function()
+					return "Test"
+				end
+			},
+			templates = {
+				sample = {
+					template_fn = function(sources)
+						return "# User\n" .. sources.a()
+					end
+				}
+			}
+		})
+
+		-- Call the function to create a chat from the selection
+		local buffer = chat.open_chat("sample")
+		-- Assert that the new buffer was created and contains the expected chat text
+		local expected_text = "# User\nTest\n"
 		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
 		assert.are.same(expected_text, actual_text)
 	end)
