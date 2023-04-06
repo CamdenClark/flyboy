@@ -93,10 +93,13 @@ require('flyboy.config').setup({
     my_source = function () return "world" end
   },
   templates = {
-    my_template = function(sources) return "# User\nHello, " .. sources.my_source() end
-    -- Output:
-    -- # User
-    -- Hello, world
+    my_template = {
+      template_fn = function(sources) return "# User\nHello, " .. sources.my_source() end
+      -- :FlyboyOpen my_template
+      -- Output:
+      -- # User
+      -- Hello, world
+    }
   }
 })
 ```
@@ -121,6 +124,7 @@ require('flyboy.config').setup({
             .. "Write a unit test for the following code:\n"
             .. sources.visual()
       end
+      -- :FlyboyStart unit_test
       -- Output:
       -- # User
       -- Write a unit test for the following
