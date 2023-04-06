@@ -40,6 +40,7 @@ describe('open_chat visual', function()
 		local selected_lines = { "hello world", "example", "some text", "more text here", "and here" }
 		vim.api.nvim_command('enew')
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, selected_lines)
+		-- luacheck: ignore
 		vim.fn.getpos = function(mark)
 			if (mark == "'<") then
 				return { 0, 2, 2 }

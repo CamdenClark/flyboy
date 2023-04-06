@@ -2,7 +2,7 @@
 
 Flyboy is a plugin for lightweight interaction with ChatGPT.
 
-It works by using a simple markdown format, as follows:
+It works by using a simple Markdown format, as follows:
 
 ```markdown
 # User
@@ -160,6 +160,8 @@ just test chat_spec.lua
 ```bash
 nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/path_to_file.lua {minimal_init = 'tests/minimal.vim'}"
 ```
+
+Read the [nvim-lua-guide][nvim-lua-guide] for more information on developing neovim plugins.
 
 [nvim-lua-guide]: https://github.com/nanotee/nvim-lua-guide
 [plenary]: https://github.com/nvim-lua/plenary.nvim
