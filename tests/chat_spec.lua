@@ -21,10 +21,10 @@ local completion_response = {
 	}
 }
 
-describe('create_chat', function()
+describe('open_chat', function()
 	it('opens a new buffer with chat in it', function()
 		-- Call the function with a range of lines and a new string
-		chat.create_chat()
+		chat.open_chat()
 
 		-- Assert that the selected lines were replaced with the expected string
 		local expected_lines = { "# User", "" }
@@ -33,7 +33,7 @@ describe('create_chat', function()
 	end)
 end)
 
-describe('create_chat_template visual', function()
+describe('open_chat visual', function()
 	it('opens a new buffer with selected text as a chat', function()
 		-- Set up a fake selection, starting on line 3, column 3, and ending on line 5, column 4
 		local selected_lines = { "hello world", "example", "some text", "more text here", "and here" }
@@ -48,7 +48,7 @@ describe('create_chat_template visual', function()
 		end
 
 		-- Call the function to create a chat from the selection
-		local buffer = chat.create_chat_template_buf("visual")
+		local buffer = chat.open_chat("visual")
 		-- Assert that the new buffer was created and contains the expected chat text
 		local expected_text = "# User\nxample\nsome t\n"
 		local actual_text = table.concat(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")

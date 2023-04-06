@@ -1,34 +1,14 @@
 local openai = require('flyboy.openai')
 
-local function open_chat_buf_with_text(text)
+local function open_chat_with_text(text)
 	-- create a new empty buffer
 	local buffer = vim.api.nvim_create_buf(true, false)
 	vim.api.nvim_buf_set_option(buffer, "filetype", "markdown")
-
 	local lines = vim.split(text, "\n")
+
 	table.insert(lines, "")
 	vim.api.nvim_buf_set_lines(buffer, 0, -1, true, lines)
 	return buffer
-end
-
-local function open_chat()
-	-- insert some text into the buffer
-	local buffer = open_chat_buf_with_text("# User")
-	vim.api.nvim_set_current_buf(buffer)
-end
-
-local function open_chat_vsplit()
-	local buffer = open_chat_buf_with_text("# User")
-	-- switch to the new buffer
-	vim.cmd("vsp | b" .. buffer)
-	vim.api.nvim_set_current_buf(buffer)
-end
-
-local function open_chat_split()
-	local buffer = open_chat_buf_with_text("# User")
-	-- switch to the new buffer
-	vim.cmd("sp | b" .. buffer)
-	vim.api.nvim_set_current_buf(buffer)
 end
 
 local sources = {
@@ -48,7 +28,6 @@ local sources = {
 		-- Modify the last line to end at the correct column
 		lines[#lines] = lines[#lines]:sub(1, end_col - 1)
 
-
 		-- Join the lines into a single string
 		return table.concat(lines, "\n")
 	end,
@@ -59,6 +38,11 @@ local sources = {
 }
 
 local templates = {
+	blank = {
+		template_fn = function(sources)
+			return "# User"
+		end
+	},
 	visual = {
 		template_fn = function(sources)
 			return "# User\n" .. sources.visual()
@@ -74,19 +58,22 @@ local templates = {
 }
 
 local function open_chat_template(template)
+	if not (template) then
+		template = "blank"
+	end
 	local final_text = templates[template].template_fn(sources)
 
-	return open_chat_buf_with_text(final_text)
+	return open_chat_with_text(final_text)
 end
 
-local function open_chat_template_buf(template)
+local function open_chat(template)
 	local chat_buffer = open_chat_template(template)
 
 	vim.api.nvim_set_current_buf(chat_buffer)
 	return chat_buffer
 end
 
-local function open_chat_template_split(template)
+local function open_chat_split(template)
 	local chat_buffer = open_chat_template(template)
 	vim.cmd("sp | b" .. chat_buffer)
 
@@ -94,7 +81,7 @@ local function open_chat_template_split(template)
 	return chat_buffer
 end
 
-local function open_chat_template_vsplit(template)
+local function open_chat_vsplit(template)
 	local chat_buffer = open_chat_template(template)
 	vim.cmd("vsp | b" .. chat_buffer)
 
@@ -157,12 +144,27 @@ local function send_message()
 	openai.get_chatgpt_completion(messages, callback)
 end
 
+local function start_chat(template)
+	open_chat(template)
+	send_message()
+end
+
+local function start_chat_split(template)
+	open_chat_split(template)
+	send_message()
+end
+
+local function start_chat_vsplit(template)
+	open_chat_vsplit(template)
+	send_message()
+end
+
 return {
-	open_chat = open_chat,
 	send_message = send_message,
+	open_chat = open_chat,
 	open_chat_split = open_chat_split,
 	open_chat_vsplit = open_chat_vsplit,
-	open_chat_template_buf = open_chat_template_buf,
-	open_chat_template_split = open_chat_template_split,
-	open_chat_template_vsplit = open_chat_template_vsplit,
+	start_chat = start_chat,
+	start_chat_split = start_chat_split,
+	start_chat_vsplit = start_chat_vsplit,
 }
