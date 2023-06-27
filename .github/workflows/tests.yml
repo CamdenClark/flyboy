@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22
     strategy:
       matrix:
         neovim_version: ['v0.9.1']
