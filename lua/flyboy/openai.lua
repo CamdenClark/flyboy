@@ -25,7 +25,6 @@ local function get_chatgpt_completion(messages, on_delta, on_done)
 		})
 end
 
-get_chatgpt_completion({ { content = "hello", role = "user" } }, function(res) print(res) end)
 
 local function get_code_edit(input, instruction, callback)
 	curl.post("https://api.openai.com/v1/edits",
