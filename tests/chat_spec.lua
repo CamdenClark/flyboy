@@ -110,7 +110,9 @@ local function test_completion(start_content, chat_gpt_output, expected_loading,
 		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 		assert.are.same(expected_loading, lines)
 
-		on_delta(completion_delta(chat_gpt_output))
+		for _, delta in ipairs(chat_gpt_output) do
+			on_delta(completion_delta(delta))
+		end
 		on_end()
 	end
 
@@ -125,7 +127,7 @@ describe('send_message', function()
 	it('sends the correct user message to the openai endpoint', function()
 		test_completion(
 			{ "# User", "Some content", "Second line" },
-			"Output",
+			{ "Output" },
 			{
 				"# User", "Some content", "Second line", "",
 				"# Assistant", "..."
@@ -143,7 +145,7 @@ describe('send_message', function()
 				"# Assistant", "test", "",
 				"# User", "Second user message"
 			},
-			"Output",
+			{ "Output" },
 			{
 				"# User", "Some content", "Second line", "",
 				"# Assistant", "test", "",
@@ -155,6 +157,20 @@ describe('send_message', function()
 				"# Assistant", "test", "",
 				"# User", "Second user message", "",
 				"# Assistant", "Output", "",
+				"# User", ""
+			})
+	end)
+	it('multiline assistant messages get handled correctly', function()
+		test_completion(
+			{ "# User", "Some content", "Second line" },
+			{ "Hello ", "World", "\n", "Foo", " Bar" },
+			{
+				"# User", "Some content", "Second line", "",
+				"# Assistant", "..."
+			},
+			{
+				"# User", "Some content", "Second line", "",
+				"# Assistant", "Hello World", "Foo Bar", "",
 				"# User", ""
 			})
 	end)
