@@ -1,6 +1,8 @@
 local curl = require('plenary.curl')
 
-local function get_chatgpt_completion(messages, on_delta, on_done)
+local function get_chatgpt_completion(model, messages, on_delta, on_done)
+	print(model)
+
 	curl.post("https://api.openai.com/v1/chat/completions",
 		{
 			headers = {
@@ -9,7 +11,7 @@ local function get_chatgpt_completion(messages, on_delta, on_done)
 			},
 			body = vim.fn.json_encode(
 				{
-					model = "gpt-3.5-turbo",
+					model = model,
 					messages = messages,
 					stream = true
 				}),

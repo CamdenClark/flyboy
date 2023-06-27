@@ -17,7 +17,7 @@ local function open_chat_template(template)
 		template = "blank"
 	end
 	local final_text = config.options.templates[template]
-		.template_fn(config.options.sources)
+	    .template_fn(config.options.sources)
 
 	return open_chat_with_text(final_text)
 end
@@ -90,18 +90,20 @@ local function send_message()
 
 	local on_delta = function(response)
 		if response
-			and response.choices
-			and response.choices[1]
-			and response.choices[1].delta
-			and response.choices[1].delta.content then
+		    and response.choices
+		    and response.choices[1]
+		    and response.choices[1].delta
+		    and response.choices[1].delta.content then
 			local delta = response.choices[1].delta.content
 			if delta == "\n" then
-				vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { currentLineContents })
+				vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false,
+					{ currentLineContents })
 				currentLine = currentLine + 1
 				currentLineContents = ""
 			elseif delta:match("\n") then
 				for line in delta:gmatch("[^\n]+") do
-					vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { currentLineContents .. line })
+					vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false,
+						{ currentLineContents .. line })
 					currentLine = currentLine + 1
 					currentLineContents = ""
 				end
@@ -112,10 +114,13 @@ local function send_message()
 	end
 
 	local on_done = function()
-		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 1, false, { currentLineContents, "", "# User", "" })
+		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 1, false,
+			{ currentLineContents, "", "# User", "" })
 	end
 
-	openai.get_chatgpt_completion(messages, on_delta, on_done)
+	local model = config.options.model
+
+	openai.get_chatgpt_completion(model, messages, on_delta, on_done)
 end
 
 local function start_chat(template)

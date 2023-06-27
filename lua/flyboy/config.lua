@@ -53,7 +53,8 @@ local templates = {
 
 local defaults = {
 	templates = templates,
-	sources = sources
+	sources = sources,
+	model = "gpt-3.5-turbo"
 }
 
 M.options = {}
