@@ -5,7 +5,7 @@ local mock = require('luassert.mock')
 
 
 local completion_response = {
-	id = "chatcmpl-123",
+	id = "chatcmpl-123-something",
 	object = "edit",
 	created = 1677652288,
 	choices = { {
