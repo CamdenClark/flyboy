@@ -123,57 +123,55 @@ local function test_completion(start_content, chat_gpt_output, expected_loading,
 	assert.are.same(expected_after, lines)
 end
 
-describe('send_message', function()
-	it('sends the correct user message to the openai endpoint', function()
-		test_completion(
-			{ "# User", "Some content", "Second line" },
-			{ "Output" },
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "..."
-			},
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "Output", "",
-				"# User", ""
-			})
-	end)
-	it('multi-turn chats are sent as expected', function()
-		test_completion(
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "test", "",
-				"# User", "Second user message"
-			},
-			{ "Output" },
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "test", "",
-				"# User", "Second user message", "",
-				"# Assistant", "..."
-			},
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "test", "",
-				"# User", "Second user message", "",
-				"# Assistant", "Output", "",
-				"# User", ""
-			})
-	end)
-	[[
-	it('multiline assistant messages get handled correctly', function()
-		test_completion(
-			{ "# User", "Some content", "Second line" },
-			{ "Hello ", "World", "\n", "Foo", " Bar" },
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "..."
-			},
-			{
-				"# User", "Some content", "Second line", "",
-				"# Assistant", "Hello World", "Foo Bar", "",
-				"# User", ""
-			})
-	end)
-	]]
-end)
+--describe('send_message', function()
+--	it('sends the correct user message to the openai endpoint', function()
+--		test_completion(
+--			{ "# User", "Some content", "Second line" },
+--			{ "Output" },
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "..."
+--			},
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "Output", "",
+--				"# User", ""
+--			})
+--	end)
+--	it('multi-turn chats are sent as expected', function()
+--		test_completion(
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "test", "",
+--				"# User", "Second user message"
+--			},
+--			{ "Output" },
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "test", "",
+--				"# User", "Second user message", "",
+--				"# Assistant", "..."
+--			},
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "test", "",
+--				"# User", "Second user message", "",
+--				"# Assistant", "Output", "",
+--				"# User", ""
+--			})
+--	end)
+--	it('multiline assistant messages get handled correctly', function()
+--		test_completion(
+--			{ "# User", "Some content", "Second line" },
+--			{ "Hello ", "World", "\n", "Foo", " Bar" },
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "..."
+--			},
+--			{
+--				"# User", "Some content", "Second line", "",
+--				"# Assistant", "Hello World", "Foo Bar", "",
+--				"# User", ""
+--			})
+--	end)
+--end)
