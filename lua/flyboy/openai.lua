@@ -1,6 +1,6 @@
 local curl = require('plenary.curl')
 
-local function get_chatgpt_completion(messages, callback)
+local function get_chatgpt_completion(messages, on_delta, on_done)
 	curl.post("https://api.openai.com/v1/chat/completions",
 		{
 			headers = {
@@ -10,11 +10,21 @@ local function get_chatgpt_completion(messages, callback)
 			body = vim.fn.json_encode(
 				{
 					model = "gpt-3.5-turbo",
-					messages = messages
+					messages = messages,
+					stream = true
 				}),
-			callback = vim.schedule_wrap(function (response) callback(vim.fn.json_decode(response.body)) end)
+			stream = vim.schedule_wrap(
+				function(_, data, _)
+					local raw_message = string.gsub(data, "^data: ", "")
+					if raw_message == "[DONE]" then
+						on_done()
+					elseif (string.len(data) > 6) then
+						on_delta(vim.fn.json_decode(string.sub(data, 6)))
+					end
+				end)
 		})
 end
+
 
 local function get_code_edit(input, instruction, callback)
 	curl.post("https://api.openai.com/v1/edits",
@@ -29,7 +39,7 @@ local function get_code_edit(input, instruction, callback)
 					input = input,
 					instruction = instruction
 				}),
-			callback = vim.schedule_wrap(function (response) callback(vim.fn.json_decode(response.body)) end)
+			callback = vim.schedule_wrap(function(response) callback(vim.fn.json_decode(response.body)) end)
 		})
 end
 

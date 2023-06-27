@@ -85,19 +85,37 @@ local function send_message()
 
 	vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { "", "# Assistant", "..." })
 
-	local callback = function(response)
-		local lines_to_add = vim.split(response.choices[1].message.content, "\n")
-		table.insert(lines_to_add, 1, "# Assistant")
-		table.insert(lines_to_add, 1, "")
+	currentLine = vim.api.nvim_buf_line_count(buffer) - 1
+	local currentLineContents = ""
 
-		table.insert(lines_to_add, "")
-		table.insert(lines_to_add, "# User")
-		table.insert(lines_to_add, "")
-
-		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 3, false, lines_to_add)
+	local on_delta = function(response)
+		if response
+			and response.choices
+			and response.choices[1]
+			and response.choices[1].delta
+			and response.choices[1].delta.content then
+			local delta = response.choices[1].delta.content
+			if delta == "\n" then
+				vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { currentLineContents })
+				currentLine = currentLine + 1
+				currentLineContents = ""
+			elseif delta:match("\n") then
+				for line in delta:gmatch("[^\n]+") do
+					vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine, false, { currentLineContents .. line })
+					currentLine = currentLine + 1
+					currentLineContents = ""
+				end
+			elseif delta ~= nil then
+				currentLineContents = currentLineContents .. delta
+			end
+		end
 	end
 
-	openai.get_chatgpt_completion(messages, callback)
+	local on_done = function()
+		vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 1, false, { currentLineContents, "", "# User", "" })
+	end
+
+	openai.get_chatgpt_completion(messages, on_delta, on_done)
 end
 
 local function start_chat(template)
