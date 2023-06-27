@@ -9,32 +9,38 @@ on:
 jobs:
   build:
     name: Run tests
-    runs-on: ubuntu-22.04
+
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        neovim_version: ['v0.9.1']
+        include:
+          - os: ubuntu-22.04
+            rev: nightly/nvim-linux64.tar.gz
 
     steps:
       - uses: actions/checkout@v3
       - run: date +%F > todays-date
       - name: Restore cache for today's nightly.
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: _neovim
-          key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
+          key: ${{ runner.os }}-${{ matrix.rev }}-${{ hashFiles('todays-date') }}
 
       - name: Prepare plenary
         run: |
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
           ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
 
-      - name: Setup neovim
-        uses: rhysd/action-setup-vim@v1
-        with:
-          neovim: true
-          version: ${{ matrix.neovim_version }}
+      - name: Prepare neovim
+        run: |
+          test -d _neovim || {
+            mkdir -p _neovim
+            curl -sL "https://github.com/neovim/neovim/releases/download/${{ matrix.rev }}" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+          }
 
       - name: Run tests
         run: |
+          export PATH="${PWD}/_neovim/bin:${PATH}"
+          export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --version
-          nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'}"
+          nvim --headless --noplugin -u tests/minimal.vim -c "plenarybusteddirectory tests/ {minimal_init = 'tests/minimal.vim'}"
