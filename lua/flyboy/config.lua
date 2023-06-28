@@ -45,8 +45,8 @@ local templates = {
 	visual_with_prompt = {
 		template_fn = function(sources_table)
 			return "# User\n"
-				.. sources_table.prompt("Prompt to add before selection context: ") .. "\n"
-				.. sources_table.visual()
+			    .. sources_table.prompt("Prompt to add before selection context: ") .. "\n"
+			    .. sources_table.visual()
 		end
 	},
 }
@@ -54,13 +54,31 @@ local templates = {
 local defaults = {
 	templates = templates,
 	sources = sources,
-	model = "gpt-3.5-turbo"
+	model = "gpt-3.5-turbo",
+	temperature = 1
 }
 
 M.options = {}
 
 function M.setup(options)
 	M.options = vim.tbl_deep_extend("force", {}, defaults, options or {})
+end
+
+function M.switch_model(model)
+	M.options.model = model
+end
+
+function M.set_temperature(temperature)
+	local temp = tonumber(temperature)
+	if temp == nil then
+		error("Temperature setting must be a number between 0 and 2: can't interpret " .. temperature .. " as a number")
+		return
+	end
+	if (temp < 0 or temp > 2) then
+		error("Temperature setting must be a number between 0 and 2")
+		return
+	end
+	M.options.temperature = temp
 end
 
 M.setup()

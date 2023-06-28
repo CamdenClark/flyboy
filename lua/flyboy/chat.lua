@@ -118,9 +118,8 @@ local function send_message()
 			{ currentLineContents, "", "# User", "" })
 	end
 
-	local model = config.options.model
 
-	openai.get_chatgpt_completion(model, messages, on_delta, on_done)
+	openai.get_chatgpt_completion(config.options, messages, on_delta, on_done)
 end
 
 local function start_chat(template)

@@ -7,3 +7,6 @@ command! -range=% -nargs=* FlyboyStartSplit lua require('flyboy.chat').start_cha
 command! -range=% -nargs=* FlyboyStartVSplit lua require('flyboy.chat').start_chat_vsplit(<f-args>)
 
 command! FlyboySendMessage lua require('flyboy.chat').send_message()
+
+command! -nargs=1 FlyboySwitchModel lua require('flyboy.config').switch_model(<f-args>)
+command! -nargs=1 FlyboySetTemperature lua require('flyboy.config').set_temperature(<f-args>)
