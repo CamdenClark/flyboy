@@ -72,7 +72,7 @@ function M.set_temperature(temperature)
         local temp = tonumber(temperature)
         if temp == nil then
                 error("Temperature setting must be a number between 0 and 2: can't interpret " ..
-                temperature .. " as a number")
+                        temperature .. " as a number")
                 return
         end
         if (temp < 0 or temp > 2) then
