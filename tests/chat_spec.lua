@@ -106,7 +106,7 @@ local function test_completion(start_content, chat_gpt_output, expected_loading,
 	vim.api.nvim_buf_set_lines(0, 0, -1, false, start_content)
 	mock.new(openai, true)
 
-	openai.get_chatgpt_completion = function(_, on_delta, on_end)
+	openai.get_chatgpt_completion = function(_, _, on_delta, on_end)
 		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 		assert.are.same(expected_loading, lines)
 

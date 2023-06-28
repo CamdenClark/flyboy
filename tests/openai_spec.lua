@@ -26,13 +26,17 @@ describe('ChatGPT call', function()
 	it('uses the correct API key and body', function()
 		local curl = mock(testCurl, true)
 		local env = mock(vim.env, true)
-		local callback = function (_) end
+		local on_delta = function(_)
+		end
 
 		env.OPENAI_API_KEY = "test"
 
 		curl.post.returns({ body = vim.fn.json_encode(completion_response) })
 
-		openai.get_chatgpt_completion({ { role = "system", content = "Say hello!" } }, callback)
+		openai.get_chatgpt_completion(
+			{ model = "gpt-3.5-turbo" },
+			{ { role = "system", content = "Say hello!" } },
+			on_delta)
 
 		assert.stub(curl.post).was_called_with("https://api.openai.com/v1/chat/completions", match.table({
 			headers = {
@@ -41,12 +45,12 @@ describe('ChatGPT call', function()
 			},
 			body = vim.fn.json_encode({
 				messages = { { role = "system", content = "Say hello!" } },
-				model = "gpt-3.5-turbo" }),
-			callback = callback
+				model = "gpt-3.5-turbo"
+			}),
+			stream = on_delta
 		})
 		)
 	end)
-
 end)
 
 describe('GPT edits call', function()
@@ -54,7 +58,8 @@ describe('GPT edits call', function()
 	it('uses the correct API key and body', function()
 		local curl = mock(testCurl, true)
 		local env = mock(vim.env, true)
-		local callback = function (_) end
+		local callback = function(_)
+		end
 
 		env.OPENAI_API_KEY = "test"
 
@@ -75,5 +80,4 @@ describe('GPT edits call', function()
 			callback = callback
 		}))
 	end)
-
 end)
