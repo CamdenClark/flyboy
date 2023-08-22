@@ -134,6 +134,28 @@ require('flyboy.config').setup({
 })
 ```
 
+### Alternative endpoints (Azure OpenAI)
+
+If you want to use Flyboy with a different endpoint that shares API compatibility (IE: Azure OpenAI)
+with OpenAI, here's a reference implementation:
+
+```lua
+require('flyboy.config').setup({
+  -- should be like "$AZURE_OPENAI_ENDPOINT/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-07-01-preview"
+  url = vim.env.AZURE_OPENAI_GPT4_URL,
+  headers = { 
+    Api_Key = vim.env.AZURE_OPENAI_GPT4_KEY,
+    Content_Type = "application/json"
+  }
+})
+```
+
+where you put the values for `AZURE_OPENAI_GPT4_URL` and `AZURE_OPENAI_GPT4_KEY` in the environment.
+
+If you want to be able to switch urls based on model, you should make some lua functions in your
+init.lua that are bound to re-call setup with the updated url and api key.
+
+
 ## Development
 
 ### Run tests
