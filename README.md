@@ -2,6 +2,8 @@
 
 Flyboy is a plugin for lightweight interaction with ChatGPT.
 
+https://github.com/CamdenClark/flyboy/assets/11891578/3e3fdf5d-25cc-4691-bf25-0abd0a228424
+
 It works by using a simple Markdown format, as follows:
 
 ```markdown
