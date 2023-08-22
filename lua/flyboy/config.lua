@@ -57,10 +57,10 @@ local defaults = {
     sources = sources,
     model = "gpt-3.5-turbo",
     temperature = 1,
-    endpoint = "https://api.openai.com/v1/chat/completions",
+    url = "https://api.openai.com/v1/chat/completions",
     headers = {
-        Authorization = "Bearer " .. vim.env.OPENAI_API_KEY,
-        content_type = "application/json"
+        Authorization = "Bearer " .. (vim.env.OPENAI_API_KEY or ""),
+        Content_Type = "application/json"
     }
 }
 

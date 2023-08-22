@@ -65,10 +65,10 @@ describe('Test configuring azure openai', function()
         env.AZURE_OPENAI_API_KEY = "test"
 
         config.setup({
-            endpoint = "https://custom.com/chat",
+            url = "https://custom.com/chat",
             headers = {
-                api_key = 'foo',
-                content_type = 'application/json'
+                Api_Key = vim.env.AZURE_OPENAI_API_KEY,
+                Content_Type = 'application/json'
             }
         })
 
@@ -82,7 +82,7 @@ describe('Test configuring azure openai', function()
         assert.stub(curl.post).was_called_with("https://custom.com/chat", match.table({
             headers = {
                 ['Content-Type'] = 'application/json',
-                ['Api-Key'] = 'foo'
+                ['Api-Key'] = 'test'
             },
             body = vim.fn.json_encode({
                 messages = { { role = "system", content = "Say hello!" } },

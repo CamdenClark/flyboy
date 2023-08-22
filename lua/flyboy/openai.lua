@@ -1,7 +1,7 @@
 local curl = require('plenary.curl')
 
 local function get_chatgpt_completion(options, messages, on_delta, on_done)
-    curl.post(options.endpoint,
+    curl.post(options.url,
         {
             headers = options.headers,
             body = vim.fn.json_encode(
