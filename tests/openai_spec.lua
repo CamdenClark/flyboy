@@ -2,6 +2,7 @@ local mock = require('luassert.mock')
 local match = require('luassert.match')
 
 local openai = require('flyboy.openai')
+local config = require('flyboy.config')
 
 local completion_response = {
     id = "chatcmpl-123",
@@ -34,7 +35,7 @@ describe('ChatGPT call', function()
         curl.post.returns({ body = vim.fn.json_encode(completion_response) })
 
         openai.get_chatgpt_completion(
-            { model = "gpt-3.5-turbo" },
+            config.options,
             { { role = "system", content = "Say hello!" } },
             on_delta)
 
@@ -53,31 +54,42 @@ describe('ChatGPT call', function()
     end)
 end)
 
-describe('GPT edits call', function()
+describe('Test configuring azure openai', function()
     local testCurl = require('plenary.curl')
     it('uses the correct API key and body', function()
         local curl = mock(testCurl, true)
         local env = mock(vim.env, true)
-        local callback = function(_)
+        local on_delta = function(_)
         end
 
-        env.OPENAI_API_KEY = "test"
+        env.AZURE_OPENAI_API_KEY = "test"
 
-        curl.post.returns({ body = vim.fn.json_encode(completion_response) }, callback)
+        config.setup({
+            url = "https://custom.com/chat",
+            headers = {
+                Api_Key = vim.env.AZURE_OPENAI_API_KEY,
+                Content_Type = 'application/json'
+            }
+        })
 
-        openai.get_code_edit("input", "instruction")
+        curl.post.returns({ body = vim.fn.json_encode(completion_response) })
 
-        assert.stub(curl.post).was_called_with("https://api.openai.com/v1/edits", match.table({
+        openai.get_chatgpt_completion(
+            config.options,
+            { { role = "system", content = "Say hello!" } },
+            on_delta)
+
+        assert.stub(curl.post).was_called_with("https://custom.com/chat", match.table({
             headers = {
                 ['Content-Type'] = 'application/json',
-                ['Authorization'] = 'Bearer test'
+                ['Api-Key'] = 'test'
             },
             body = vim.fn.json_encode({
-                model = "code-davinci-edit-001",
-                input = "input",
-                instruction = "instruction"
+                messages = { { role = "system", content = "Say hello!" } },
+                model = "gpt-3.5-turbo"
             }),
-            callback = callback
-        }))
+            stream = on_delta
+        })
+        )
     end)
 end)

@@ -56,7 +56,12 @@ local defaults = {
     templates = templates,
     sources = sources,
     model = "gpt-3.5-turbo",
-    temperature = 1
+    temperature = 1,
+    url = "https://api.openai.com/v1/chat/completions",
+    headers = {
+        Authorization = "Bearer " .. (vim.env.OPENAI_API_KEY or ""),
+        Content_Type = "application/json"
+    }
 }
 
 M.options = {}
