@@ -152,8 +152,8 @@ require('flyboy.config').setup({
 
 where you put the values for `AZURE_OPENAI_GPT4_URL` and `AZURE_OPENAI_GPT4_KEY` in the environment.
 
-If you want to be able to switch urls based on model, you should make some lua functions in your
-init.lua that are bound to re-call setup with the updated url and api key.
+If you want to be able to switch URLs based on model, you should make some lua functions in your
+init.lua that are bound to re-call setup with the updated URL and API key.
 
 
 ## Development
