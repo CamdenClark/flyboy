@@ -1,4 +1,4 @@
-# flyboy.nvim
+# flyboy
 
 Flyboy is a plugin for lightweight interaction with ChatGPT.
 
@@ -25,7 +25,8 @@ This makes it easy to:
 
 No popups that take over your screen, flyboy operates on any buffer.
 
-Flyboy also supports configuring custom templates and data sources, so you can support prompts like the following:
+Flyboy also supports configuring custom templates, so you can go straight from
+your buffer to ChatGPT with context:
 
 ```markdown
 # User
@@ -34,7 +35,6 @@ Write a unit test in Lua for the following code
 <Your code from visual selection here>
 ```
 
-and automatically send them to ChatGPT for a response.
 
 ## Installation
 
@@ -46,7 +46,7 @@ export OPENAI_API_KEY=""
 
 2. Have curl installed on your machine
 
-3. Install `plenary.nvim` and `flyboy.nvim` using your package manager:
+3. Install `plenary.nvim` and `flyboy` using your package manager:
 
 For example, using plug
 
@@ -118,7 +118,7 @@ Templates are how you construct prompts that will be sent to ChatGPT.
 
 #### Visual selection
 
-Flyboy supports adding something you've selected in visual mode to the contents 
+Flyboy supports adding something you've selected in visual mode to the contents
 of a prompt:
 
 ```lua
@@ -165,7 +165,7 @@ require('flyboy.config').setup({
 
 ### Alternative models: gpt-3.5-turbo-16k / gpt-4 / gpt-4-32k
 
-If you want to use Flyboy with a different model in OpenAI, call setup with the model. 
+If you want to use Flyboy with a different model in OpenAI, call setup with the model:
 
 ```lua
 require('flyboy.config').setup({
@@ -178,7 +178,7 @@ To change on the fly, call `:FlyboySwitchModel gpt-4`
 
 ### Alternative endpoints (Azure OpenAI)
 
-If you want to use Flyboy with a different endpoint that shares API compatibility (IE: Azure OpenAI)
+Flyboy supports configuring the URL and headers with a different endpoint that shares API compatibility (IE: Azure OpenAI)
 with OpenAI, here's a reference implementation:
 
 ```lua
