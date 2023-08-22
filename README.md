@@ -1,4 +1,4 @@
-# flyboy.nvim
+# flyboy
 
 Flyboy is a plugin for lightweight interaction with ChatGPT.
 
@@ -16,14 +16,17 @@ George Washington
 # User
 ```
 
-This makes it really easy to:
+This makes it easy to:
 
 1. Start chats
 1. Save/share chats
 1. Edit conversations in line
 1. Have multi-turn conversations
 
-Flyboy also supports configuring custom templates and data sources, so you can support prompts like the following:
+No popups that take over your screen, flyboy operates on any buffer.
+
+Flyboy also supports configuring custom templates, so you can go straight from
+your buffer to ChatGPT with context:
 
 ```markdown
 # User
@@ -32,7 +35,6 @@ Write a unit test in Lua for the following code
 <Your code from visual selection here>
 ```
 
-and automatically send them to ChatGPT for a response.
 
 ## Installation
 
@@ -44,7 +46,7 @@ export OPENAI_API_KEY=""
 
 2. Have curl installed on your machine
 
-3. Install `plenary.nvim` and `flyboy.nvim` using your package manager:
+3. Install `plenary.nvim` and `flyboy` using your package manager:
 
 For example, using plug
 
@@ -53,10 +55,10 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'CamdenClark/flyboy'
 ```
 
-## Functions
+## Usage
 
-These functions open a new chat window. Split opens in a horizontal split,
-while VSplit opens in a vertical split. They optionally take a
+`:FlyboyOpen` functions open a new chat window. Split opens in a horizontal split,
+while VSplit opens in a vertical split. They optionally take a template.
 
 ```vim
 :FlyboyOpen
@@ -67,8 +69,8 @@ while VSplit opens in a vertical split. They optionally take a
 :FlyboyOpen visual
 ```
 
-These functions open a new chat window and automatically send the message to the
-assistant. Best used with a template.
+`:FlyboyStart` functions open a new chat window and automatically send the message to the
+assistant. You need to provide a template or the first message sent will be blank.
 
 ```vim
 " starts a chat session with the current text selected in visual mode
@@ -77,13 +79,17 @@ assistant. Best used with a template.
 :FlyboyStartVSplit visual
 ```
 
-Finally, at any time, you can send a message:
+To send a message:
 
 ```vim
 :FlyboySendMessage
 ```
 
+The response from the Assistant will be streamed back to the same buffer.
+
 ## Configuration
+
+### Templates
 
 You can configure custom sources and templates for your ChatGPT prompts.
 
@@ -110,10 +116,10 @@ including `visual`, which provides the text that's visually selected.
 
 Templates are how you construct prompts that will be sent to ChatGPT.
 
-### Visual selection
+#### Visual selection
 
-A common thing you'd want to do is support adding something you've selected
-in visual mode to the contents of a prompt. Here's how you do that.
+Flyboy supports adding something you've selected in visual mode to the contents
+of a prompt:
 
 ```lua
 require('flyboy.config').setup({
@@ -134,9 +140,45 @@ require('flyboy.config').setup({
 })
 ```
 
+#### Buffer selection
+
+Flyboy supports adding the contents of your current buffer to a prompt:
+
+```lua
+require('flyboy.config').setup({
+  templates = {
+    unit_test_buffer = {
+      template_fn = function(sources)
+          return "# User\n"
+            .. "Write unit tests for the code in the following file:\n"
+            .. sources.buffer()
+      end
+      -- :FlyboyStart unit_test_buffer
+      -- Output:
+      -- # User
+      -- Write a unit test for the following
+      -- <Your previous buffer's contents>
+    }
+  }
+})
+```
+
+### Alternative models: gpt-3.5-turbo-16k / gpt-4 / gpt-4-32k
+
+If you want to use Flyboy with a different model in OpenAI, call setup with the model:
+
+```lua
+require('flyboy.config').setup({
+  -- ...
+  model = "gpt-4"
+})
+```
+
+To change on the fly, call `:FlyboySwitchModel gpt-4`
+
 ### Alternative endpoints (Azure OpenAI)
 
-If you want to use Flyboy with a different endpoint that shares API compatibility (IE: Azure OpenAI)
+Flyboy supports configuring the URL and headers with a different endpoint that shares API compatibility (IE: Azure OpenAI)
 with OpenAI, here's a reference implementation:
 
 ```lua

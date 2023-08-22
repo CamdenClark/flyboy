@@ -23,6 +23,11 @@ local sources = {
     prompt = function(message)
         return vim.fn.input(message)
     end,
+    buffer = function()
+        local buf = vim.api.nvim_get_current_buf()
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        return table.concat(lines, "\n")
+    end,
     filetype = function()
         return vim.bo.filetype
     end,
@@ -40,6 +45,11 @@ local templates = {
     visual = {
         template_fn = function(sources_table)
             return "# User\n" .. sources_table.visual()
+        end
+    },
+    buffer = {
+        template_fn = function(sources_table)
+            return "# User\n" .. sources_table.buffer()
         end
     },
     visual_with_prompt = {
