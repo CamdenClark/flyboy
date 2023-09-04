@@ -112,13 +112,16 @@ local function send_message()
         end
     end
 
-    local on_done = function()
+    local on_complete = function()
         vim.api.nvim_buf_set_lines(buffer, currentLine, currentLine + 1, false,
             { currentLineContents, "", "# User", "" })
+        if config.options.on_complete ~= nil then
+            config.options.on_complete()
+        end
     end
 
 
-    openai.get_chatgpt_completion(config.options, messages, on_delta, on_done)
+    openai.get_chatgpt_completion(config.options, messages, on_delta, on_complete)
 end
 
 local function start_chat(template)
