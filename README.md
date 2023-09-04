@@ -200,6 +200,15 @@ where you put the values for `AZURE_OPENAI_GPT4_URL` and `AZURE_OPENAI_GPT4_KEY`
 If you want to be able to switch URLs based on model, you should make some lua functions in your
 init.lua that are bound to re-call setup with the updated URL and API key.
 
+### Callback when message finished
+
+Flyboy supports configuring a callback function that is called when a response from the assistant finishes streaming.
+
+```lua
+require('flyboy.config').setup({
+  on_complete = function() print("foo") end
+})
+```
 
 ## Development
 
