@@ -1,6 +1,6 @@
 local curl = require('plenary.curl')
 
-local function get_chatgpt_completion(options, messages, on_delta, on_done)
+local function get_chatgpt_completion(options, messages, on_delta, on_complete)
     curl.post(options.url,
         {
             headers = options.headers,
@@ -15,7 +15,7 @@ local function get_chatgpt_completion(options, messages, on_delta, on_done)
                 function(_, data, _)
                     local raw_message = string.gsub(data, "^data: ", "")
                     if raw_message == "[DONE]" then
-                        on_done()
+                        on_complete()
                     elseif (string.len(data) > 6) then
                         on_delta(vim.fn.json_decode(string.sub(data, 6)))
                     end

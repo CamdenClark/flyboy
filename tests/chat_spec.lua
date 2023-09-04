@@ -106,14 +106,14 @@ local function test_completion(start_content, chat_gpt_output, expected_loading,
     vim.api.nvim_buf_set_lines(0, 0, -1, false, start_content)
     mock.new(openai, true)
 
-    openai.get_chatgpt_completion = function(_, _, on_delta, on_end)
+    openai.get_chatgpt_completion = function(_, _, on_delta, on_complete)
         local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
         assert.are.same(expected_loading, lines)
 
         for _, delta in ipairs(chat_gpt_output) do
             on_delta(completion_delta(delta))
         end
-        on_end()
+        on_complete()
     end
 
     chat.send_message()
@@ -173,5 +173,24 @@ describe('send_message', function()
                 "# Assistant", "Hello World", "Foo Bar", "",
                 "# User", ""
             })
+    end)
+    it('calling a configured on_complete function works', function ()
+        local called = false
+
+        config.setup({ on_complete = function () called = true end })
+
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, { "# User", "Foo" })
+        mock.new(openai, true)
+
+        openai.get_chatgpt_completion = function(_, _, on_delta, on_complete)
+            for _, delta in ipairs({ "# Assistant", "Hello world"}) do
+                on_delta(completion_delta(delta))
+            end
+            on_complete()
+        end
+
+        chat.send_message()
+
+        assert.are.same(true, called)
     end)
 end)
