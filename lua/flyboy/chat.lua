@@ -4,7 +4,7 @@ local config = require('flyboy.config')
 local function open_chat_with_text(text)
     -- create a new empty buffer
     local buffer = vim.api.nvim_create_buf(true, false)
-    vim.api.nvim_buf_set_option(buffer, "filetype", "markdown")
+    vim.api.nvim_buf_set_option(buffer, "filetype", "flyboy")
     local lines = vim.split(text, "\n")
 
     table.insert(lines, "")
